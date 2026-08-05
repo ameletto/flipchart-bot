@@ -1,0 +1,43 @@
+[Unit]
+Description=flipchart bot — anonymous async whiteboards for Discord
+Documentation=https://github.com/ameletto/flipchart-bot
+# Wait for the network so the Discord gateway connection doesn't fail on boot.
+After=network-online.target
+Wants=network-online.target
+
+# These are [Unit] keys, not [Service] ones — systemd silently ignores them if
+# they're put in [Service]. Give up after 5 restarts in 60s so a persistent
+# failure doesn't hammer Discord's API in a tight loop.
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+# setup-vm.sh rewrites the user and paths below to match whoever runs it and
+# wherever the project actually lives, so these are defaults, not requirements.
+User=ubuntu
+WorkingDirectory=/home/ubuntu/flipchart-bot
+ExecStart=/usr/bin/node src/index.js
+
+# Secrets come from .env via dotenv, which the app already loads.
+# WorkingDirectory above is what lets dotenv find it.
+
+# Always come back: crash, OOM, or a dropped gateway connection.
+Restart=always
+RestartSec=10
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=flipchart
+
+# Modest hardening. Unlike a bot that only talks outward, this one also serves a
+# public website, so it is worth locking down what it can reach. It needs to write
+# data/ (board contents, previews, uploads) and nothing else.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/flipchart-bot/data
+
+[Install]
+WantedBy=multi-user.target

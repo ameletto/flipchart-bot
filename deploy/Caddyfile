@@ -1,0 +1,17 @@
+# Caddy sits in front of the bot and does one job: terminate TLS.
+#
+# Replace flipchart.example.com with your domain. Caddy will get a Let's Encrypt
+# certificate on first start and renew it forever, with no cron job and no config.
+# It proxies websockets without needing to be told.
+#
+# This must match FLIPCHART_PUBLIC_URL in .env, including https://.
+
+flipchart.example.com {
+	encode zstd gzip
+
+	# The whiteboard bundle is content-hashed by Vite, so it can be cached hard.
+	@immutable path /app/assets/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	reverse_proxy localhost:3000
+}

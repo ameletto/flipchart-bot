@@ -1,0 +1,33 @@
+{
+  "name": "flipchart-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot for anonymous, asynchronous whiteboards. Post a flipchart into a channel and let people fill it in over a week.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node src/discord/deploy-commands.js",
+    "build": "vite build",
+    "dev:web": "vite",
+    "test": "node test/smoke.mjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@tldraw/sync-core": "^5.2.5",
+    "@tldraw/tlschema": "^5.2.5",
+    "better-sqlite3": "^12.4.1",
+    "discord.js": "^14.27.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@tldraw/state": "^5.2.5",
+    "@tldraw/sync": "^5.2.5",
+    "@vitejs/plugin-react": "^5.0.4",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tldraw": "^5.2.5",
+    "vite": "^7.1.9"
+  }
+}
