@@ -10,6 +10,10 @@ export default defineConfig({
 	build: {
 		outDir: 'dist',
 		emptyOutDir: true,
+		// tldraw is a ~1.9 MB bundle and there is no useful way to split it — the editor is
+		// needed before anything renders. Raise the threshold so a normal build doesn't end
+		// on a warning that looks like a failure.
+		chunkSizeWarningLimit: 2500,
 	},
 	server: {
 		// `npm run dev:web` gives hot reload while the bot and sync server run on :3000.
