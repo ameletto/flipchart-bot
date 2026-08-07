@@ -218,7 +218,17 @@ To tell the two layers apart when it's still not working: run `sudo tcpdump -i a
 
 #### You don't have to buy a domain
 
-Caddy will get a Let's Encrypt certificate for any hostname that resolves to the machine, and a free one works as well as a paid one. [DuckDNS](https://www.duckdns.org) hands out `something.duckdns.org` subdomains for nothing: sign in, pick a name, point it at the VM's static IP. Then set
+Caddy will get a Let's Encrypt certificate for any hostname that resolves to the machine, and a free one works as well as a paid one. [DuckDNS](https://www.duckdns.org) hands out `something.duckdns.org` subdomains for nothing: sign in with an account you already have, pick a name, and put the VM's static **external** IP in the address field.
+
+> Watch that field — DuckDNS pre-fills it with the IP of whatever machine you're browsing from, which is your laptop, not your server. Leaving it means the name points at your house and Caddy can't get a certificate.
+
+Confirm it resolves *before* deploying, since Caddy needs the name working to complete the challenge:
+
+```bash
+dig +short something.duckdns.org      # should print the VM's external IP
+```
+
+Then set
 
 ```
 FLIPCHART_PUBLIC_URL=https://something.duckdns.org
