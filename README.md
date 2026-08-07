@@ -88,6 +88,14 @@ Unlike teabot, **no privileged intents are needed** — leave Server Members, Me
 
 Then **Installation** → enable the `bot` and `applications.commands` scopes, and open the generated install link. `Send Messages` and `Embed Links` are the only permissions it needs.
 
+**Both scopes matter.** Adding the bot with only `bot` puts it in your member list but leaves it unable to install slash commands, and `npm run deploy` then fails with `DiscordAPIError[50001]: Missing Access` — a 403, not a 401, because the token was fine and the *guild* was refused. If you hit that, re-invite with this URL, substituting your own application ID:
+
+```
+https://discord.com/api/oauth2/authorize?client_id=YOUR_APPLICATION_ID&permissions=19456&scope=bot%20applications.commands
+```
+
+`19456` is View Channel + Send Messages + Embed Links. The same error appears if `DISCORD_GUILD_ID` names a server the bot hasn't been added to, so check that too.
+
 **3. Configure**
 
 ```bash
