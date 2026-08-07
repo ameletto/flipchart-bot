@@ -82,6 +82,8 @@ cd flipchart-bot && npm install && npm run build
 
 At the [Developer Portal](https://discord.com/developers/applications): **New Application** → **Bot** → **Reset Token**, and copy the token.
 
+> **Create a new application — don't reuse one you already have.** `npm run deploy` sends a `PUT` of the whole command set for that `DISCORD_CLIENT_ID`, which *replaces* every command the application had. Point it at an existing bot and you will wipe that bot's commands.
+
 Unlike teabot, **no privileged intents are needed** — leave Server Members, Message Content and Presence all off. The bot never reads messages and never enumerates members.
 
 Then **Installation** → enable the `bot` and `applications.commands` scopes, and open the generated install link. `Send Messages` and `Embed Links` are the only permissions it needs.
