@@ -180,6 +180,17 @@ The same always-free `e2-micro` that runs teabot is enough. Follow teabot's VM c
 
 Oracle Cloud's Always Free tier is the other option, and more generous — though it was cut to 2 Arm cores and 12 GB in June 2026. Both providers want a credit card on file even though neither charges you.
 
+#### Running it alongside another bot on the same VM
+
+Google's always-free tier covers **one** `e2-micro` per month, so a second VM is billed. If you already have one running something else, put this on it rather than paying — `deploy/setup-vm.sh` is written to be re-runnable on a machine that's already set up. It skips the swapfile if one exists, skips Node if it's current, and installs its own `flipchart` systemd unit, independent of anything else. There's no port conflict with a bot that only makes outbound connections.
+
+Two things do need changing on an existing VM, both editable in place:
+
+- **Open HTTP/HTTPS.** A bot that never served a website won't have them open. Edit the instance and tick **Allow HTTP traffic** and **Allow HTTPS traffic**.
+- **Make the external IP static**, or it changes on reboot and your hostname silently points nowhere.
+
+What you give up is isolation: an out-of-memory kill takes both processes with it, and the machine is now reachable from the internet where it may not have been before.
+
 #### If you use Oracle, open the firewall twice
 
 This is the single most common way to lose an evening on Oracle, and it doesn't apply to Google. Oracle instances have **two** firewalls, and opening only the obvious one leaves the site unreachable with no useful error:
