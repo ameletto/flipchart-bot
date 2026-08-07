@@ -41,7 +41,33 @@ if [[ -z "${DOMAIN}" ]]; then
   exit 1
 fi
 
+# Validate the whole of .env up front. Everything below this point is slow — building
+# tldraw on a small VM takes minutes — and it is miserable to sit through that only to
+# fail on a typo the app could have caught in a second.
+if [[ ! "${PUBLIC_URL}" =~ ^https?:// ]]; then
+  echo "ERROR: FLIPCHART_PUBLIC_URL must start with https:// (got \"${PUBLIC_URL}\")."
+  echo
+  echo "Fix it in .env — the scheme is not optional:"
+  echo "    FLIPCHART_PUBLIC_URL=https://${PUBLIC_URL}"
+  exit 1
+fi
+
+MISSING=()
+for key in DISCORD_TOKEN DISCORD_CLIENT_ID FLIPCHART_SECRET; do
+  grep -qE "^${key}=.+" "${APP_DIR}/.env" || MISSING+=("${key}")
+done
+
+if [[ ${#MISSING[@]} -gt 0 ]]; then
+  echo "ERROR: these are empty in .env: ${MISSING[*]}"
+  echo
+  echo "DISCORD_TOKEN and DISCORD_CLIENT_ID come from the Discord Developer Portal."
+  echo "Generate the secret in place with:"
+  echo "    sed -i \"s|^FLIPCHART_SECRET=.*|FLIPCHART_SECRET=\$(openssl rand -hex 32)|\" .env"
+  exit 1
+fi
+
 echo "==> domain: ${DOMAIN}"
+echo "==> .env looks complete"
 
 # --- swap ------------------------------------------------------------------
 # 1 GB of RAM is enough to run this but can OOM while npm builds better-sqlite3's
